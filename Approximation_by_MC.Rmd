@@ -1,0 +1,159 @@
+---
+title: "Approximation of the Distribution Function of Standard Normal by the Monte Carlo Method"
+author: "Shiying Xiao"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+***Abstract***
+
+*In this report, the distribution function of normal distribution is approximated based on the Monte Carlo method by R Markdown. Under different conditions, the approximation effect is different.*
+
+***Keywords***: *Monte Carlo method, R Markdown, normal distribution.*
+
+# 1 Introduction
+
+Consider approximation of the distribution function of
+$N(0, 1)$,
+\begin{align}
+\Phi(t) = \int_{-\infty}^t\frac{1}{\sqrt{2\pi}}e^{-y^2/2}dy.
+\end{align}
+by the Monte Carlo methods:
+\begin{equation}
+\hat\Phi(t) = \frac{1}{n} \sum_{i=1}^n I(X_i \le t),
+\end{equation}
+where $X_i$'s are a random sample from $N(0, 1)$, and $I(\cdot)$ is the indicator function. Experiment with the approximation at $n \in \{10^2, 10^3, 10^4\}$ at $t \in \{0.0, 0.67, 0.84, 1.28, 1.65, 2.32, 2.58, 3.09, 3.72\}$ to form a table.
+
+# 2 Monte Carlo Methodology
+
+## 2.1 Basic Idea
+
+The basic idea of Monte Carlo method: the problem to be solved is the probability of the occurrence of a random event A (or the expected value of a random variable B). Through some "experimental" method, researchers can obtain the frequency of occurrence of A event, so as to estimate the probability of occurrence of A event (or some numerical characteristics of random variable B are obtained to get the expected value of B).
+
+## 2.2 Working Process
+
+There are two parts of application of Monte Carlo method in solving practical problems:
+
+(a) When Monte Carlo method is used to simulate a process, it is necessary to generate random variables of various probability distributions.
+
+(b) Estimate the numerical characteristics of the model using statistical methods to obtain the numerical solutions of practical problems.
+
+## 2.3 Main Steps
+
+The basic steps for solving practical problems with Monte Carlo method are as follows:
+
+(a) Construct or describe probabilistic processes.
+
+(b) Sampling from a known probability distribution.
+
+(c) Establish various estimators.
+
+# 3 Experiment with the Approximation
+
+## 3.1 Monte Carlo Approximation
+
+Create the function in R to get $\Phi(t)$:
+```{r}
+set.seed(100) #set the seed to ensure that the test results are reproducible, 100 is just the number of the seed.
+
+RealValue <- function(t) { #function RealValue
+  real <- pnorm(t, 0, 1) #distribution function for the standard normal distribution with vector of quantiles equal to t
+  return(real)
+} #end function RealValue
+```
+
+The cumulative density function $\hat\Phi(t)$ approximated to the standard normal distribution $N(0, 1)$ is obtained by using Monte Carlo method, and its code is as follows:
+```{r}
+EstiValue <- function(t, n) { #function EstiValue
+  x_i <- rnorm(n, 0, 1) #n random generations for the standard normal distribution
+  I <- ifelse(x_i <= t, 1, 0) #indicator function
+  esti <- sum(I)/n
+  return(esti)
+} # end function EstiValue
+```
+
+## 3.2 Bias Estimation
+
+Create the function to obtain the bias between $\hat\Phi(t)$ and $\Phi(t)$ repeated $l$ experiments:
+```{r}
+BiasValue <- function(t, n) { #function BiasValue
+  bias <- array(NA, dim = c(length(t), length(n), length(l))) #create an array with dimension length(t)×length(n)×length(l)
+  for (i in 1:length(t)) { #for i
+    for (j in 1:length(n)) { #for j
+      for (k in 1:length(l)) { #for k
+        bias[i, j, k] <- (RealValue(t[i]) - EstiValue(t[i], n[j])) #get bias
+      } #end for k
+    } #end for j
+  } #end for i
+  return(bias)
+} #end function BiasValue
+
+EstiValue_mean <- function(t, n) { #function EstiValue_mean
+  esti_mean <- array(NA, dim = c(length(t), length(n), length(l))) #create an array with dimension length(t)×length(n)×length(l)
+  for (i in 1:length(t)) { #for i
+    for (j in 1:length(n)) { #for j
+      for (k in 1:length(l)) { #for k
+        esti_mean[i, j, k] <- EstiValue(t[i], n[j])
+      } #end for k
+    } #end for j
+  } #end for i
+  EstiValue_mean <- apply(esti_mean, c(1,2), mean) #calculate the mean values of esti_mean's rows and columns
+  return(EstiValue_mean) #get the mean of the estimator
+} #end function EstiValue_mean
+```
+
+# 4 Conclusion
+
+Repeat the experiment $l=100$ times at $n \in \{10^2, 10^3, 10^4\}$ at $t \in \{0.0, 0.67, 0.84, 1.28, 1.65, 2.32, 2.58, 3.09, 3.72\}$, the results are as follows:
+
+As shown in the following table, the real values are compared with the average values of the corresponding Monte Carlo simulation.
+
+```{r echo = FALSE}
+#Import the values of $t$, $n$ and $k$
+t_values <- c(0.0, 0.67, 0.84, 1.28, 1.65, 2.32, 2.58, 3.09, 3.72)
+n_values <- c(10^2, 10^3, 10^4)
+l_values <- c(1:100)
+#Assign values to $t$, $n$ and $k$
+t <- t_values
+n <- n_values
+l <- l_values
+t_data <- cbind.data.frame(EstiValue_mean(t,n),RealValue(t)) #Combine the average of the estimates and true values into a data set
+rownames(t_data) <- paste("t=", t, sep = "")
+colnames(t_data) <- c("n=10^2", "n=10^3", "n=10^4", "True Value")
+knitr::kable(t_data, digits = 4, caption = "Approximation and True Values at different n", align = "c")
+```
+
+It can be seen from the table that when the sample size $n$ of Monte Carlo increases, the probability of simulation becomes closer to the true one.
+
+Boxplot can show the distribution characteristics of data clearly, and recognize the abnormal values in data batch intuitively.
+
+```{r echo = FALSE}
+p_data <- data.frame(t=NA, n=NA, bias=NA) #Create a data frame for plot
+for(t in t_values) {
+  for(n in n_values) {
+    for(l in l_values) {
+      bias <- BiasValue(t, n)
+      p_data <- rbind(p_data, c(t, n, bias)) #Combine the average of the estimates and true values into a data set
+    }
+  }
+}
+p_data <- p_data[-1, ]
+
+#encode the vector as the factor
+p_data$t <- as.factor(p_data$t)
+p_data$n <- as.factor(p_data$n)
+library(ggplot2)
+ggplot(data = p_data, mapping = aes(x=t, y=bias, fill=n)) +
+  geom_boxplot() +
+  theme(legend.position="bottom") +
+  ggtitle("The Boxplot of Bias in Approximation") +
+  labs(x="t", y="bias") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+As can be seen from the figure above, when $t$ is constant, the box body is flatter and the end line is shorter with the increase of $n$. When $n$ is constant, with the increase of $t$, the trend of box body and end line is the same as before. In the boxplot, the flatter the box and the shorter the end line indicate the more concentrated the data. This shows that as the sample sizes $n$ and quantiles $t$ increase, the deviation of the error decreases gradually, and the accuracy of the approximation increase.
