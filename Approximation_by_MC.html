@@ -381,10 +381,9 @@ summary {
 </div>
 
 
-<div id="abstract" class="section level1">
-<h1>Abstract</h1>
-<p>In this report, the distribution function of normal distribution is approximated based on the Monte Carlo method. Under different conditions, the approximation effect is different.</p>
-</div>
+<p><strong><em>Abstract</em></strong></p>
+<p><em>In this report, the distribution function of normal distribution is approximated based on the Monte Carlo method by R Markdown. Under different conditions, the approximation effect is different.</em></p>
+<p><strong><em>Keywords</em></strong>: <em>Monte Carlo method, R Markdown, normal distribution.</em></p>
 <div id="introduction" class="section level1">
 <h1>1 Introduction</h1>
 <p>Consider approximation of the distribution function of <span class="math inline">\(N(0, 1)\)</span>, <span class="math display">\[\begin{align}
@@ -394,21 +393,21 @@ summary {
 \end{equation}\]</span> where <span class="math inline">\(X_i\)</span>’s are a random sample from <span class="math inline">\(N(0, 1)\)</span>, and <span class="math inline">\(I(\cdot)\)</span> is the indicator function. Experiment with the approximation at <span class="math inline">\(n \in \{10^2, 10^3, 10^4\}\)</span> at <span class="math inline">\(t \in \{0.0, 0.67, 0.84, 1.28, 1.65, 2.32, 2.58, 3.09, 3.72\}\)</span> to form a table.</p>
 </div>
 <div id="monte-carlo-methodology" class="section level1">
-<h1>2 Monte Carlo methodology</h1>
-<div id="the-basic-idea" class="section level2">
-<h2>2.1 The basic idea</h2>
+<h1>2 Monte Carlo Methodology</h1>
+<div id="basic-idea" class="section level2">
+<h2>2.1 Basic Idea</h2>
 <p>The basic idea of Monte Carlo method: the problem to be solved is the probability of the occurrence of a random event A (or the expected value of a random variable B). Through some “experimental” method, researchers can obtain the frequency of occurrence of A event, so as to estimate the probability of occurrence of A event (or some numerical characteristics of random variable B are obtained to get the expected value of B).</p>
 </div>
 <div id="working-process" class="section level2">
-<h2>2.2 Working process</h2>
+<h2>2.2 Working Process</h2>
 <p>There are two parts of application of Monte Carlo method in solving practical problems:</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>When Monte Carlo method is used to simulate a process, it is necessary to generate random variables of various probability distributions.</p></li>
 <li><p>Estimate the numerical characteristics of the model using statistical methods to obtain the numerical solutions of practical problems.</p></li>
 </ol>
 </div>
-<div id="the-main-steps" class="section level2">
-<h2>2.3 The main steps</h2>
+<div id="main-steps" class="section level2">
+<h2>2.3 Main Steps</h2>
 <p>The basic steps for solving practical problems with Monte Carlo method are as follows:</p>
 <ol style="list-style-type: lower-alpha">
 <li><p>Construct or describe probabilistic processes.</p></li>
@@ -418,7 +417,7 @@ summary {
 </div>
 </div>
 <div id="experiment-with-the-approximation" class="section level1">
-<h1>3 Experiment with the approximation</h1>
+<h1>3 Experiment with the Approximation</h1>
 <div id="monte-carlo-approximation" class="section level2">
 <h2>3.1 Monte Carlo Approximation</h2>
 <p>Create the function in R to get <span class="math inline">\(\Phi(t)\)</span>:</p>
